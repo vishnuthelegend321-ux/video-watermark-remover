@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Watermark Remover Pro - Aurora Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        aurora: {
+                            50: '#ecfdf5',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            950: '#022c22',
+                        },
+                        mint: {
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#00f5a0',
+                        },
+                        obsidian: {
+                            800: '#0f172a',
+                            900: '#0b1329',
+                            950: '#050a18',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(5, 10, 24, 0.6); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.4); border-radius: 4px; }
+        .aurora-card {
+            background: rgba(11, 19, 41, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .aurora-card:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+        }
+        .glow-button {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+        }
+        .glow-button:hover {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.45);
+        }
+    </style>
+</head>
+<body class="bg-[#040814] text-slate-100 min-h-screen font-sans flex flex-col selection:bg-aurora-500 selection:text-white">
+
+    <!-- Ambient Glowing Lights -->
+    <div class="fixed top-0 left-1/3 w-96 h-96 bg-aurora-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <!-- Navigation Bar -->
+    <header class="border-b border-aurora-950/80 bg-[#060c1e]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-aurora-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-aurora-500/20">
+                    <i class="fa-solid fa-wand-magic-sparkles text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-wide text-white">
+                        WatermarkRemover<span class="text-mint-500">.AI</span>
+                    </h1>
+                    <p class="text-[10px] text-aurora-400 font-mono tracking-wider">AURORA MINT ENGINE v3.0</p>
+                </div>
+            </div>
+
+            <button id="btn-show-history" class="px-3.5 py-1.5 rounded-xl bg-obsidian-950 hover:bg-obsidian-900 text-xs font-semibold text-slate-200 transition border border-aurora-950 flex items-center space-x-2">
+                <i class="fa-solid fa-clock-rotate-left text-mint-500"></i>
+                <span>Batch History</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
+        
+        <!-- Upload Hero Section -->
+        <section class="aurora-card rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <div class="max-w-3xl">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-aurora-500/10 text-mint-300 border border-aurora-500/30 mb-3">
+                    <span class="w-2 h-2 rounded-full bg-mint-500 animate-ping mr-2"></span> Active Queue Pipeline
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                    Batch Video Watermark Removal
+                </h2>
+                <p class="mt-2 text-slate-400 text-sm sm:text-base leading-relaxed">
+                    Select and upload your videos all at once. Our AI queue engine processes each video sequentially in the background. Close the tab anytime and return later to download your clean videos.
+                </p>
+            </div>
+
+            <!-- Upload Dropzone -->
+            <div class="mt-6">
+                <div id="dropzone" class="border-2 border-dashed border-aurora-950 hover:border-aurora-500 bg-[#070e20]/80 hover:bg-[#0c1630] transition-all duration-300 rounded-2xl p-8 text-center cursor-pointer group">
+                    <input type="file" id="file-input" multiple accept="video/mp4,video/x-m4v,video/mov,video/avi,video/mkv,video/webm" class="hidden">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-aurora-950 group-hover:bg-aurora-600/30 text-mint-500 group-hover:text-white flex items-center justify-center transition-all duration-300 mb-4 border border-aurora-900">
+                        <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                    </div>
+                    <p class="text-base font-semibold text-slate-200">
+                        Drag & Drop video files here or <span class="text-mint-400 hover:underline">browse files</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Supports MP4, MOV, AVI, MKV, WEBM (Up to 500MB per file)</p>
+                </div>
+
+                <!-- Selected Files List -->
+                <div id="selected-files-container" class="mt-4 hidden space-y-3">
+                    <div class="flex items-center justify-between text-xs text-slate-400 font-medium px-1">
+                        <span>Selected Videos (<span id="selected-count" class="text-mint-400 font-bold">0</span>)</span>
+                        <button id="btn-clear-selection" class="text-rose-400 hover:underline text-xs">Clear Selection</button>
+                    </div>
+                    <div id="selected-files-list" class="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
+                    
+                    <button id="btn-upload-batch" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-aurora-600 via-emerald-500 to-cyan-500 hover:from-aurora-500 hover:to-cyan-400 font-bold text-sm text-slate-950 glow-button transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Upload & Begin Watermark Removal</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Batch Status Dashboard -->
+        <section id="batch-dashboard" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-aurora-950 pb-4">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-xl font-bold text-white">Batch Queue Monitor</h3>
+                        <span id="batch-id-badge" class="font-mono text-xs px-2.5 py-0.5 rounded-md bg-obsidian-950 text-mint-400 border border-aurora-950"></span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-0.5">Videos are processed one by one to optimize memory and processing speed.</p>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
+                <div class="aurora-card rounded-xl p-4 text-center">
+                    <p class="text-xs text-slate-400 font-medium">Total Videos</p>
+                    <p id="stat-total" class="text-2xl font-black text-white mt-1">0</p>
+                </div>
+                <div class="aurora-card rounded-xl p-4 text-center">
+                    <p class="text-xs text-amber-400 font-medium">In Queue</p>
+                    <p id="stat-queued" class="text-2xl font-black text-amber-400 mt-1">0</p>
+                </div>
+                <div class="aurora-card rounded-xl p-4 text-center">
+                    <p class="text-xs text-cyan-400 font-medium">Processing</p>
+                    <p id="stat-processing" class="text-2xl font-black text-cyan-400 mt-1">0</p>
+                </div>
+                <div class="aurora-card rounded-xl p-4 text-center">
+                    <p class="text-xs text-mint-400 font-medium">Completed</p>
+                    <p id="stat-completed" class="text-2xl font-black text-mint-400 mt-1">0</p>
+                </div>
+                <div class="aurora-card rounded-xl p-4 text-center col-span-2 sm:col-span-1">
+                    <p class="text-xs text-rose-400 font-medium">Failed</p>
+                    <p id="stat-failed" class="text-2xl font-black text-rose-400 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- Overall Progress Bar -->
+            <div class="aurora-card rounded-xl p-4 space-y-2">
+                <div class="flex justify-between text-xs font-semibold">
+                    <span class="text-slate-300">Overall Batch Progress</span>
+                    <span id="batch-progress-text" class="text-mint-400 font-mono">0%</span>
+                </div>
+                <div class="w-full h-2.5 bg-obsidian-950 rounded-full overflow-hidden p-0.5 border border-aurora-950">
+                    <div id="batch-progress-bar" class="h-full bg-gradient-to-r from-aurora-600 via-mint-500 to-cyan-400 rounded-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Video Tasks Table -->
+            <div class="aurora-card rounded-xl overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-obsidian-950 text-slate-400 text-xs uppercase tracking-wider border-b border-aurora-950">
+                                <th class="py-3.5 px-4 font-semibold">Video Name</th>
+                                <th class="py-3.5 px-4 font-semibold">Status</th>
+                                <th class="py-3.5 px-4 font-semibold">Progress</th>
+                                <th class="py-3.5 px-4 font-semibold text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-table-body" class="divide-y divide-aurora-950/60 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- History Drawer -->
+    <div id="history-modal" class="fixed inset-0 bg-[#040814]/80 backdrop-blur-md z-50 hidden flex justify-end">
+        <div class="w-full max-w-md bg-[#070f24] h-full p-6 border-l border-aurora-950 flex flex-col shadow-2xl">
+            <div class="flex items-center justify-between border-b border-aurora-950 pb-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-clock-rotate-left text-mint-400"></i>
+                    <span>Batch History</span>
+                </h3>
+                <button id="btn-close-history" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="history-list" class="flex-1 overflow-y-auto mt-4 space-y-3 pr-1 custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- AdSense Compliance Footer -->
+    <footer class="border-t border-aurora-950/80 py-6 mt-12 bg-[#060c1e]/60 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>&copy; 2026 WatermarkRemover.AI Core. Powered by OpenCV AI Inpainter.</p>
+            <div class="flex items-center space-x-4 text-slate-400">
+                <a href="#" class="hover:text-mint-400 transition">Privacy Policy</a>
+                <span>•</span>
+                <a href="#" class="hover:text-mint-400 transition">Terms of Service</a>
+                <span>•</span>
+                <a href="#" class="hover:text-mint-400 transition">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Logic Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('file-input');
+            const selectedFilesContainer = document.getElementById('selected-files-container');
+            const selectedFilesList = document.getElementById('selected-files-list');
+            const selectedCount = document.getElementById('selected-count');
+            const btnClearSelection = document.getElementById('btn-clear-selection');
+            const btnUploadBatch = document.getElementById('btn-upload-batch');
+
+            const batchDashboard = document.getElementById('batch-dashboard');
+            const batchIdBadge = document.getElementById('batch-id-badge');
+            const statTotal = document.getElementById('stat-total');
+            const statQueued = document.getElementById('stat-queued');
+            const statProcessing = document.getElementById('stat-processing');
+            const statCompleted = document.getElementById('stat-completed');
+            const statFailed = document.getElementById('stat-failed');
+
+            const batchProgressBar = document.getElementById('batch-progress-bar');
+            const batchProgressText = document.getElementById('batch-progress-text');
+            const tasksTableBody = document.getElementById('tasks-table-body');
+
+            const btnShowHistory = document.getElementById('btn-show-history');
+            const btnCloseHistory = document.getElementById('btn-close-history');
+            const historyModal = document.getElementById('history-modal');
+            const historyList = document.getElementById('history-list');
+
+            let selectedFiles = [];
+            let currentBatchId = localStorage.getItem('current_watermark_batch_id') || null;
+            let pollTimer = null;
+
+            dropzone.addEventListener('click', () => fileInput.click());
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-aurora-500', 'bg-[#0c1630]'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-aurora-500', 'bg-[#0c1630]'));
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('border-aurora-500', 'bg-[#0c1630]');
+                if (e.dataTransfer.files) handleFiles(Array.from(e.dataTransfer.files));
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files) handleFiles(Array.from(e.target.files));
+            });
+
+            function handleFiles(files) {
+                const valid = files.filter(f => ['mp4','mov','avi','mkv','webm','flv'].includes(f.name.split('.').pop().toLowerCase()));
+                if (valid.length === 0) return alert('Select valid video formats.');
+                selectedFiles = [...selectedFiles, ...valid];
+                renderSelected();
+            }
+
+            function renderSelected() {
+                if (selectedFiles.length === 0) return selectedFilesContainer.classList.add('hidden');
+                selectedFilesContainer.classList.remove('hidden');
+                selectedCount.textContent = selectedFiles.length;
+                selectedFilesList.innerHTML = '';
+                selectedFiles.forEach((f, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between p-2.5 rounded-xl bg-obsidian-950 border border-aurora-950 text-xs';
+                    item.innerHTML = `
+                        <div class="flex items-center space-x-2 truncate">
+                            <i class="fa-solid fa-file-video text-mint-400"></i>
+                            <span class="truncate font-medium text-slate-200">${f.name}</span>
+                            <span class="text-slate-500 text-[10px]">(${(f.size/1048576).toFixed(1)} MB)</span>
+                        </div>
+                        <button onclick="removeFile(${i})" class="text-slate-500 hover:text-rose-400 transition"><i class="fa-solid fa-xmark"></i></button>
+                    `;
+                    selectedFilesList.appendChild(item);
+                });
+            }
+
+            window.removeFile = (idx) => { selectedFiles.splice(idx, 1); renderSelected(); };
+            btnClearSelection.addEventListener('click', () => { selectedFiles = []; renderSelected(); });
+
+            btnUploadBatch.addEventListener('click', async () => {
+                if (selectedFiles.length === 0) return;
+                btnUploadBatch.disabled = true;
+                btnUploadBatch.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Uploading Batch...`;
+
+                const formData = new FormData();
+                selectedFiles.forEach(f => formData.append('files', f));
+
+                try {
+                    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.success) {
+                        currentBatchId = data.batch_id;
+                        localStorage.setItem('current_watermark_batch_id', currentBatchId);
+                        selectedFiles = [];
+                        renderSelected();
+                        startPolling(currentBatchId);
+                    }
+                } catch (e) {
+                    alert('Upload failed.');
+                } finally {
+                    btnUploadBatch.disabled = false;
+                    btnUploadBatch.innerHTML = `<i class="fa-solid fa-play"></i><span>Upload & Begin Watermark Removal</span>`;
+                }
+            });
+
+            function startPolling(batchId) {
+                if (pollTimer) clearInterval(pollTimer);
+                batchDashboard.classList.remove('hidden');
+                batchIdBadge.textContent = `#${batchId.substring(0,8)}`;
+                fetchBatch(batchId);
+                pollTimer = setInterval(() => fetchBatch(batchId), 2000);
+            }
+
+            async function fetchBatch(batchId) {
+                try {
+                    const res = await fetch(`/api/batch/${batchId}`);
+                    if (!res.ok) return clearInterval(pollTimer);
+                    const data = await res.json();
+                    renderBatch(data);
+                    if (data.stats.queued === 0 && data.stats.processing === 0) clearInterval(pollTimer);
+                } catch (e) {}
+            }
+
+            function renderBatch(data) {
+                statTotal.textContent = data.total_videos;
+                statQueued.textContent = data.stats.queued;
+                statProcessing.textContent = data.stats.processing;
+                statCompleted.textContent = data.stats.completed;
+                statFailed.textContent = data.stats.failed;
+
+                batchProgressBar.style.width = `${data.stats.overall_progress}%`;
+                batchProgressText.textContent = `${data.stats.overall_progress}%`;
+
+                tasksTableBody.innerHTML = '';
+                data.tasks.forEach(task => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-aurora-950/20 transition';
+
+                    let badge = '';
+                    if (task.status === 'completed') {
+                        badge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-aurora-500/10 text-mint-400 border border-aurora-500/20"><i class="fa-solid fa-check mr-1.5"></i> Completed</span>`;
+                    } else if (task.status === 'processing') {
+                        badge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Processing</span>`;
+                    } else {
+                        badge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20"><i class="fa-regular fa-clock mr-1.5"></i> Queued</span>`;
+                    }
+
+                    let action = task.status === 'completed'
+                        ? `<a href="/api/download/${task.task_id}" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-aurora-600 to-emerald-500 hover:from-aurora-500 hover:to-emerald-400 text-slate-950 font-bold text-xs shadow-md transition inline-flex items-center space-x-1">
+                            <i class="fa-solid fa-download"></i><span>Download Video</span>
+                           </a>`
+                        : `<span class="text-xs text-slate-500 italic">Processing sequentially...</span>`;
+
+                    tr.innerHTML = `
+                        <td class="py-3.5 px-4 font-medium text-slate-200 truncate max-w-xs">${task.filename}</td>
+                        <td class="py-3.5 px-4">${badge}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-obsidian-950 rounded-full h-1.5 overflow-hidden border border-aurora-950">
+                                    <div class="bg-mint-500 h-full transition-all duration-300" style="width: ${task.progress}%"></div>
+                                </div>
+                                <span class="text-xs text-slate-400 font-mono">${Math.round(task.progress)}%</span>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 text-right">${action}</td>
+                    `;
+                    tasksTableBody.appendChild(tr);
+                });
+            }
+
+            btnShowHistory.addEventListener('click', async () => {
+                historyModal.classList.remove('hidden');
+                const res = await fetch('/api/batches');
+                const data = await res.json();
+                historyList.innerHTML = '';
+                data.batches.forEach(b => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3 rounded-xl bg-obsidian-950 border border-aurora-950 cursor-pointer hover:border-aurora-500 transition';
+                    item.innerHTML = `<p class="font-bold text-slate-200">Batch #${b.batch_id.substring(0,8)}</p><p class="text-xs text-slate-400">${b.completed_count}/${b.total_videos} Videos Completed</p>`;
+                    item.onclick = () => { currentBatchId = b.batch_id; localStorage.setItem('current_watermark_batch_id', currentBatchId); historyModal.classList.add('hidden'); startPolling(currentBatchId); };
+                    historyList.appendChild(item);
+                });
+            });
+
+            btnCloseHistory.addEventListener('click', () => historyModal.classList.add('hidden'));
+
+            if (currentBatchId) startPolling(currentBatchId);
+        });
+    </script>
+</body>
+      </html>
