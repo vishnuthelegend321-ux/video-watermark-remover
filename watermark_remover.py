@@ -1,4 +1,4 @@
-import cv2
+    import cv2
 import numpy as np
 import os
 import time
@@ -25,7 +25,7 @@ class Inpainter:
     def inpaint(self, frame: np.ndarray, mask: np.ndarray) -> np.ndarray:
         if mask is None or np.sum(mask) == 0:
             return frame
-        return cv2.inpaint(frame, mask, inpaintRadius=2, flags=cv2.INPAINT_TELEA)
+        return cv2.inpaint(frame, mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
 
 def remove_watermark_from_video(input_path: str, output_path: str, progress_callback=None):
     if not os.path.exists(input_path):
@@ -36,8 +36,12 @@ def remove_watermark_from_video(input_path: str, output_path: str, progress_call
     
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    orig_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    orig_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    # CRITICAL FIX: Force even width and height to prevent pixel stride corruption ("cracked" video)
+    width = orig_width if orig_width % 2 == 0 else orig_width - 1
+    height = orig_height if orig_height % 2 == 0 else orig_height - 1
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
@@ -48,6 +52,10 @@ def remove_watermark_from_video(input_path: str, output_path: str, progress_call
             ret, frame = cap.read()
             if not ret or frame is None:
                 break
+
+            # Resize to match even dimensions if needed
+            if frame.shape != width or frame.shape[0] != height:
+                frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_AREA)
 
             mask = model.detect_watermark(frame)
             clean_frame = model.inpaint(frame, mask)
